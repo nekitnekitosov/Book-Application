@@ -30,6 +30,19 @@ namespace Book.Repositories
 
             return book;
         }
+        public async Task<bool> DeleteBookAsync(int id)
+        {
+            var book = await _context.Books.FindAsync(id);
+
+            if(book != null)
+            {
+                _context.Books.Remove(book);
+               await _context.SaveChangesAsync();
+               return true;
+            }
+
+            return false;
+        }
         public async Task<string> FindBookAsync(string nameBook)
         {
             var request = await _context.Books.FirstOrDefaultAsync(a => a.BookName == nameBook);

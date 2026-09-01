@@ -21,12 +21,17 @@ namespace Book
 
             if (requestAdd == null) return null;
 
-            return new Boook { BookName = bookRequest.BookName, 
+            return new Boook {
+            BookName = bookRequest.BookName, 
             AuthorName = bookRequest.AuthorName, 
             YearOfPublish = bookRequest.YearOfPublish,
             Description = bookRequest.Description, 
             CreatedAt = DateTime.UtcNow, 
             UpdatedAt = DateTime.UtcNow };
+        }
+        public async Task<bool> DeleteBook(int id)
+        {
+            return await _bookRepository.DeleteBookAsync(id);
         }
     }
 }

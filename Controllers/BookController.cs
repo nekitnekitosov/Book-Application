@@ -22,5 +22,14 @@ namespace Book.Controllers
 
             return Ok(book);
         }
+        [HttpDelete("books{id}")]
+        public async Task<IActionResult> DeleteBook(int id)
+        {
+            var request = await _bookService.DeleteBook(id);
+
+            if(request == true) return Ok();
+
+            return BadRequest();
+        }
     }
 }

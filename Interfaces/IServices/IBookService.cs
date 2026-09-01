@@ -5,5 +5,6 @@ namespace Book.Interfaces
     public interface IBookService
     {
         Task<Boook> AddBook(BookRequest bookRequest);
+        Task<bool> DeleteBook(int id);
     }
 }
