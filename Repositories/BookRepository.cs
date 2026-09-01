@@ -1,5 +1,7 @@
 using Book.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 
 namespace Book.Repositories
 {
@@ -42,6 +44,21 @@ namespace Book.Repositories
             }
 
             return false;
+        }
+        public async Task<Boook> PutBookAsync(BookRequest bookRequest, int idBook)
+        {
+            var book = await _context.Books.FirstOrDefaultAsync(a => a.BookId == idBook);
+
+            if(book == null) throw new NotFoundException("Книга не найдена!");
+
+            var newBook = new Boook
+            {
+                BookId = bookRequest.BookId,
+                BookName = bookRequest.BookName,
+                AuthorName = bookRequest.AuthorName
+            };
+
+            return newBook;
         }
         public async Task<string> FindBookAsync(string nameBook)
         {

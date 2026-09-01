@@ -15,11 +15,11 @@ namespace Book
         {
             var requestFind = await _bookRepository.FindBookAsync(bookRequest.BookName);
 
-            if (requestFind != null) return null;
+            if (requestFind != null) throw new ConflictException("Такая книга уже добавлена в базу!");;
 
             var requestAdd = await _bookRepository.AddBookAsync(bookRequest);
 
-            if (requestAdd == null) return null;
+            if (requestAdd == null) throw new NotFoundException("Ошибка! Пустой запрос");;
 
             return new Boook {
             BookName = bookRequest.BookName, 
