@@ -1,7 +1,9 @@
-namespace Book
+using Book.Models;
+
+namespace Book.Interfaces
 {
     public interface IBookService
     {
-        Task<bool> AddBook(BookRequest bookRequest);
+        Task<Boook> AddBook(BookRequest bookRequest);
     }
 }

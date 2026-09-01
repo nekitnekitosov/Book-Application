@@ -2,6 +2,7 @@ using Book;
 using Book.Models;
 using Book.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Book.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 

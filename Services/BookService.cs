@@ -1,23 +1,32 @@
 using Book.Models;
-using Book.Repositories;
+using Book.Interfaces;
 
 namespace Book
 {
     public class BookService : IBookService
     {
         private readonly IBookRepository _bookRepository;
-        
+
         public BookService(IBookRepository bookRepository)
         {
             _bookRepository = bookRepository;
         }
-        public async Task<bool> AddBook(BookRequest bookRequest)
+        public async Task<Boook> AddBook(BookRequest bookRequest)
         {
-            var request = await _bookRepository.AddBookAsync(bookRequest);
+            var requestFind = await _bookRepository.FindBookAsync(bookRequest.BookName);
 
-            if(request == null) return false;
+            if (requestFind != null) return null;
 
-            return true;
+            var requestAdd = await _bookRepository.AddBookAsync(bookRequest);
+
+            if (requestAdd == null) return null;
+
+            return new Boook { BookName = bookRequest.BookName, 
+            AuthorName = bookRequest.AuthorName, 
+            YearOfPublish = bookRequest.YearOfPublish,
+            Description = bookRequest.Description, 
+            CreatedAt = DateTime.UtcNow, 
+            UpdatedAt = DateTime.UtcNow };
         }
     }
 }

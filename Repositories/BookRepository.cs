@@ -1,4 +1,5 @@
 using Book.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Book.Repositories
 {
@@ -29,6 +30,13 @@ namespace Book.Repositories
 
             return book;
         }
-        
+        public async Task<string> FindBookAsync(string nameBook)
+        {
+            var request = await _context.Books.FirstOrDefaultAsync(a => a.BookName == nameBook);
+
+            if(request == null) return null;
+
+           return request.BookName;
+        }
     }
 }

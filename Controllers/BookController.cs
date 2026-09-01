@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Book.Interfaces;
 
 namespace Book.Controllers
 {
@@ -16,6 +17,8 @@ namespace Book.Controllers
         public async Task<IActionResult> AddBook([FromBody] BookRequest bookRequest)
         {
             var book = await _bookService.AddBook(bookRequest);
+
+            if(book == null) return BadRequest();
 
             return Ok(book);
         }
