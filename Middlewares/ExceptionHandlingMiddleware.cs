@@ -13,8 +13,6 @@ namespace Book
         }
         public async Task InvokeAsync(HttpContext context)
         {
-            Console.WriteLine("🔥 Middleware вызван для: " + context.Request.Path);
-
             try
             {
                 await _next(context);
@@ -36,6 +34,10 @@ namespace Book
                         break;
                     case ValidationException e:
                         statusCode = context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                        message = e.Message;
+                        break;
+                    case UnauthorizedException e:
+                        statusCode = context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                         message = e.Message;
                         break;
                     default:

@@ -15,7 +15,7 @@ namespace Book
         {
             var requestFind = await _bookRepository.FindBookAsync(bookRequest.BookName);
 
-            if (requestFind != null) throw new ConflictException("Такая книга уже добавлена в базу!");;
+            if (requestFind != null) throw new ConflictException("Такая книга уже существует в базе!");;
 
             var requestAdd = await _bookRepository.AddBookAsync(bookRequest);
 
