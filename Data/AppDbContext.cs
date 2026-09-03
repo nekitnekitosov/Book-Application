@@ -27,7 +27,7 @@ namespace Book.Models
                 enity.HasKey(u => u.UserId);
                 enity.Property(u => u.UserName).IsRequired().HasMaxLength(50);
                 enity.Property(u => u.PasswordHash).IsRequired();
-                enity.Property(u => u.RoleId).IsRequired().HasMaxLength(1);
+                enity.Property(u => u.Role).IsRequired().HasMaxLength(20);
 
                 enity.HasIndex(u => u.UserName).IsUnique();
             });

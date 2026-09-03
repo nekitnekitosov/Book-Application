@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Book.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Book.Controllers
 {
@@ -13,6 +14,8 @@ namespace Book.Controllers
         {
             _bookService = bookService;
         }
+        
+        [Authorize(Roles = "Admin")]
         [HttpPost("books")]
         public async Task<IActionResult> AddBook([FromBody] BookRequest bookRequest)
         {

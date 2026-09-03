@@ -25,7 +25,7 @@ namespace Book
 
             var newUser = new User
             {
-                RoleId = 1,
+                Role = "User",
                 UserName = userRequest.UserName,
                 PasswordHash = hashPassword,
                 CreatedAt = DateTime.UtcNow
