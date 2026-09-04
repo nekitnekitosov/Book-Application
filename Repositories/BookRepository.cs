@@ -1,4 +1,6 @@
+using Azure;
 using Book.Models;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
@@ -13,10 +15,31 @@ namespace Book.Repositories
         {
             _context = context;
         }
-        // public async Task GetBooksAsync()
-        // {
+        public async Task<PagedResult<GetBookResponse>> GetBooksAsync(int page, int pageSize)
+        {
+            var querry = _context.Books.AsQueryable();
+            var totalCount = await querry.CountAsync();
             
-        // }    
+            var books = await querry
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(a => new GetBookResponse
+                {
+                    NameBook = a.BookName,
+                    AuthorName = a.AuthorName,
+                    YearOfPublish = a.YearOfPublish,
+                    Description = a.Description
+                })
+                .ToListAsync();
+
+            return new PagedResult<GetBookResponse>
+            {
+                Items = books,
+                TotalCount = totalCount,
+                Page = page,
+                PageSize = pageSize
+            };
+        }    
         public async Task<Boook> AddBookAsync(BookRequest bookRequest)
         {
             var book = new Boook

@@ -14,9 +14,15 @@ namespace Book.Controllers
         {
             _bookService = bookService;
         }
-        
+        [HttpGet("books")]
+        public async Task<IActionResult> GetBooks(int page, int pageSize)
+        {
+            var books = await _bookService.GetBooks(page, pageSize);
+
+            return Ok(books);
+        }
         [Authorize(Roles = "Admin")]
-        [HttpPost("books")]
+        [HttpPost("book")]
         public async Task<IActionResult> AddBook([FromBody] BookRequest bookRequest)
         {
             var book = await _bookService.AddBook(bookRequest);
@@ -25,7 +31,8 @@ namespace Book.Controllers
 
             return Ok(book);
         }
-        [HttpDelete("books{id}")]
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("book{id}")]
         public async Task<IActionResult> DeleteBook(int id)
         {
             var request = await _bookService.DeleteBook(id);

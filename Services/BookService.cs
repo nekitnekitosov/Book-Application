@@ -11,6 +11,12 @@ namespace Book
         {
             _bookRepository = bookRepository;
         }
+        public async Task<PagedResult<GetBookResponse>> GetBooks(int page, int pageSize)
+        {
+            if(page <= 0 || pageSize <= 0) throw new ValidationException("Укажите page или pageSize");
+
+            return await _bookRepository.GetBooksAsync(page, pageSize);
+        }
         public async Task<Boook> AddBook(BookRequest bookRequest)
         {
             var requestFind = await _bookRepository.FindBookAsync(bookRequest.BookName);
