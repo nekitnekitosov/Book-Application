@@ -21,7 +21,7 @@ namespace Book.Controllers
 
             return Ok(books);
         }
-        [Authorize(Roles = "Admin")]
+        // [Authorize(Roles = "Admin")]
         [HttpPost("book")]
         public async Task<IActionResult> AddBook([FromBody] BookRequest bookRequest)
         {
@@ -31,7 +31,7 @@ namespace Book.Controllers
 
             return Ok(book);
         }
-        [Authorize(Roles = "Admin")]
+        // [Authorize(Roles = "Admin")]
         [HttpDelete("book{id}")]
         public async Task<IActionResult> DeleteBook(int id)
         {

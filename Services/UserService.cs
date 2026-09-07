@@ -12,6 +12,14 @@ namespace Book
             _userRepository = userRepository;
             _tokenService = tokenService;
         }
+        public async Task<User> GetMeUser(int userId)
+        {
+           var user = await _userRepository.GetMeUserAsync(userId);
+
+           if(user == null) throw new NotFoundException("Пользователь не найден");
+
+           return user;
+        }
         public async Task<LoginResponse> LoginUser(UserLoginRequest userLoginRequest)
         {
             if (!await _userRepository.FindUser(userLoginRequest.Username)) throw new NotFoundException("Такого пользователя не существует!");

@@ -10,6 +10,10 @@ namespace Book
         {
             _context = context;
         }
+        public async Task<User> GetMeUserAsync(int userId)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+        }
         public async Task<User> LoginUserAsync(UserLoginRequest userLoginRequest)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == userLoginRequest.Username);
