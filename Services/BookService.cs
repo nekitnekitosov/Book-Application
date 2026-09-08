@@ -1,5 +1,6 @@
 using Book.Models;
 using Book.Interfaces;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace Book
 {
@@ -10,6 +11,10 @@ namespace Book
         public BookService(IBookRepository bookRepository)
         {
             _bookRepository = bookRepository;
+        }
+        public async Task<Boook> PutBook(JsonPatchDocument<BookUpdateDto> bookRequest, int bookId)
+        {
+            return await _bookRepository.PutBookAsync(bookRequest, bookId);
         }
         public async Task<PagedResult<GetBookResponse>> GetBooks(int page, int pageSize)
         {

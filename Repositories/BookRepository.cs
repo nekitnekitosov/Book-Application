@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace Book.Repositories
 {
@@ -71,20 +72,32 @@ namespace Book.Repositories
 
             return false;
         }
-        public async Task<Boook> PutBookAsync(BookRequest bookRequest, int idBook)
+        public async Task<Boook> PutBookAsync(JsonPatchDocument<BookUpdateDto> bookRequest, int idBook)
         {
             var book = await _context.Books.FirstOrDefaultAsync(a => a.BookId == idBook);
 
             if(book == null) throw new NotFoundException("Книга не найдена!");
 
-            var newBook = new Boook
+            var bookDto = new BookUpdateDto
             {
-                BookId = bookRequest.BookId,
-                BookName = bookRequest.BookName,
-                AuthorName = bookRequest.AuthorName
+                BookName = book.BookName,
+                YearOfPublish = book.YearOfPublish,
+                AuthorName = book.AuthorName,
+                Description = book.Description,
+                UpdatedAt = DateTime.UtcNow
             };
 
-            return newBook;
+            bookRequest.ApplyTo(bookDto);
+        
+            book.BookName = bookDto.BookName;
+            book.AuthorName = bookDto.AuthorName;
+            book.YearOfPublish = bookDto.YearOfPublish;
+            book.Description = bookDto.Description;
+            book.UpdatedAt = bookDto.UpdatedAt;
+
+            await _context.SaveChangesAsync();
+
+            return book;
         }
         public async Task<string> FindBookAsync(string nameBook)
         {
