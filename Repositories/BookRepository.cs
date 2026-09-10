@@ -1,9 +1,5 @@
-using Azure;
 using Book.Models;
-using Microsoft.AspNetCore.Authorization.Infrastructure;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
 using Microsoft.AspNetCore.JsonPatch;
 
 namespace Book.Repositories

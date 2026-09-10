@@ -1,15 +1,19 @@
 using Book.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Book
 {
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly ITokenRepository _tokenRepository;
         private readonly ITokenService _tokenService;
 
-        public UserService(IUserRepository userRepository, ITokenService tokenService)
+        public UserService(IUserRepository userRepository, ITokenService tokenService, ITokenRepository tokenRepository)
         {
             _userRepository = userRepository;
+            _tokenRepository = tokenRepository;
+
             _tokenService = tokenService;
         }
         public async Task<User> GetMeUser(int userId)
@@ -26,11 +30,15 @@ namespace Book
 
             var user = await _userRepository.LoginUserAsync(userLoginRequest);
 
-            var token = _tokenService.GenerateJwtToken(user);
+            var accessToken = _tokenService.GenerateJwtToken(user);
+            var refreshToken = _tokenService.GenerateRefreshToken();
+
+            await _tokenRepository.AddRefreshTokenAsync(refreshToken, user.UserId);
 
             return new LoginResponse
             {
-                Token = token,
+                AccessToken = accessToken,
+                RefreshToken = refreshToken,
                 Username = user.UserName,
                 Role = user.Role
             };

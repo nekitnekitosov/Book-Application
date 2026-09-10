@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Book.Models;
 using Microsoft.IdentityModel.Tokens;
@@ -8,10 +9,30 @@ namespace Book
 {
     public class TokenService : ITokenService
     {
-        public readonly IConfiguration _configuration;
-        public TokenService(IConfiguration configuration)
+        private readonly IConfiguration _configuration;
+        private readonly ITokenRepository _tokenRepository;
+        public TokenService(IConfiguration configuration, ITokenRepository tokenRepository)
         {
             _configuration = configuration;
+            _tokenRepository = tokenRepository;
+        }
+        public async Task<UpdateRefreshTokenDto> UpdateRefreshToken(string refreshToken)
+        {
+            if (refreshToken == null) throw new ValidationException("Введите токен. Пустой запрос");
+
+            var receivedUser = await _tokenRepository.UpdateRefreshTokenAsync(refreshToken); // полученный user
+
+            if (receivedUser == null) throw new ValidationException("Ошибка");
+
+            var idOldToken = await _tokenRepository.FindOldRefreshTokenAsync(receivedUser.UserId); // поиск старого токена
+            await _tokenRepository.RevokeTokenAsync(receivedUser.UserId); // отзываем токен и записываем в бд
+
+            var newAccessToken = GenerateJwtToken(receivedUser);
+            var newRefreshToken = GenerateRefreshToken();
+
+            await _tokenRepository.AddRefreshTokenAsync(newRefreshToken, receivedUser.UserId); // сохранение в бд рефреш токена
+
+            return new UpdateRefreshTokenDto {UserId = receivedUser.UserId, AccessToken = newAccessToken, RefreshToken = newRefreshToken};
         }
         public string GenerateJwtToken(User user)
         {
@@ -41,6 +62,13 @@ namespace Book
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
             return tokenHandler.WriteToken(token);
+        }
+        public string GenerateRefreshToken()
+        {
+            var randomNumber = new Byte[32];
+            using var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(randomNumber);
+            return Convert.ToHexString(randomNumber);
         }
     }
 }

@@ -8,6 +8,7 @@ namespace Book.Models
 
         public DbSet<Boook> Books {get; set;}
         public DbSet<User> Users {get;set;}
+        public DbSet<RefreshTokens> RefreshTokens {get;set;}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -30,6 +31,35 @@ namespace Book.Models
                 enity.Property(u => u.Role).IsRequired().HasMaxLength(20);
 
                 enity.HasIndex(u => u.UserName).IsUnique();
+            });
+
+            modelBuilder.Entity<RefreshTokens>(enity =>
+            {
+                enity.HasKey(e => e.Id);
+
+                // Связь с Users (один пользователь — много токенов)
+                enity.HasOne(e => e.User)
+                    .WithMany(u => u.RefreshTokens)
+                    .HasForeignKey(e => e.IdUser)
+                    .OnDelete(DeleteBehavior.Cascade); // При удалении пользователя — удалить его токены
+
+                enity.Property(e => e.RefreshToken)
+                    .IsRequired()
+                    .HasMaxLength(500);
+
+                enity.Property(e => e.IsRevoked)
+                    .IsRequired()
+                    .HasDefaultValue(false);
+                    
+                enity.Property(e => e.ExpiresDate)
+                    .IsRequired();
+
+                enity.Property(e => e.CreatedAt)
+                    .IsRequired();
+
+                enity.HasIndex(e => e.IdUser);
+                enity.HasIndex(e => e.RefreshToken)
+                    .IsUnique();  // Токен должен быть уникальным (один токен = один пользователь)
             });
         }
     }

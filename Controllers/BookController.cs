@@ -16,6 +16,7 @@ namespace Book.Controllers
         {
             _bookService = bookService;
         }
+        [Authorize]
         [HttpGet("books")]
         public async Task<IActionResult> GetBooks(int page, int pageSize)
         {
