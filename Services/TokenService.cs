@@ -24,7 +24,6 @@ namespace Book
 
             if (receivedUser == null) throw new ValidationException("Ошибка");
 
-            var idOldToken = await _tokenRepository.FindOldRefreshTokenAsync(receivedUser.UserId); // поиск старого токена
             await _tokenRepository.RevokeTokenAsync(receivedUser.UserId); // отзываем токен и записываем в бд
 
             var newAccessToken = GenerateJwtToken(receivedUser);

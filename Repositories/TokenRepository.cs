@@ -50,14 +50,8 @@ namespace Book.Models
             {
                 token.IsRevoked = true;
             }
-            
-            await _context.SaveChangesAsync();
-        }
-        public async Task<int> FindOldRefreshTokenAsync(int userId)
-        {
-            var token = await _context.RefreshTokens.FirstOrDefaultAsync(a => a.IdUser == userId);
 
-            return token.Id;
+            await _context.SaveChangesAsync();
         }
     }
 }
