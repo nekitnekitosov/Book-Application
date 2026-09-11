@@ -9,5 +9,6 @@ namespace Book.Models
         public DateTime CreatedAt {get; set;}
 
         public ICollection<RefreshTokens> RefreshTokens {get;set;}
+        public ICollection<Review> Reviews { get; set; }
     }
 }

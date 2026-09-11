@@ -46,7 +46,7 @@ namespace Book
                         break;
                 }
 
-                string jsonString = JsonSerializer.Serialize(new { StatusCode = statusCode, Message = message});
+                string jsonString = JsonSerializer.Serialize(new { StatusCode = statusCode, Message = message });
                 context.Response.ContentType = "application/json";
 
                 await context.Response.WriteAsync(jsonString);
