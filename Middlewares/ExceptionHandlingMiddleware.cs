@@ -21,7 +21,7 @@ namespace Book
             {
                 int statusCode = 0;
                 string message = null;
-
+                
                 switch (ex)
                 {
                     case NotFoundException e:
@@ -38,6 +38,10 @@ namespace Book
                         break;
                     case UnauthorizedException e:
                         statusCode = context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        message = e.Message;
+                        break;
+                    case ForbiddenException e:
+                        statusCode = context.Response.StatusCode = StatusCodes.Status403Forbidden;
                         message = e.Message;
                         break;
                     default:

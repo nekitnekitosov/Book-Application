@@ -22,12 +22,17 @@ namespace Book
             
             if(request == null) return BadRequest("Ошибка");
 
-            return Ok(request);
+            return Ok(new {Status = "Успешно добавили отзыв", Rating = reviewRequest.Rating, Comment = reviewRequest.Comment});
         }
         [HttpDelete("{reviewId}review")]
         public async Task<IActionResult> RemoveReview (int reviewId)
         {
-            var request = await _reviewService.RemoveReview(reviewId);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier);
+            var userRole = User.FindFirst(ClaimTypes.Role)?.Value ?? "User";
+
+            if(userId == null) return Unauthorized(new {error = "ID пользователя не найдено в токене"});
+
+            var request = await _reviewService.RemoveReview(reviewId, int.Parse(userId.Value), userRole);
 
             if(request == false) return BadRequest("Не получилось удалить отзыв");
 

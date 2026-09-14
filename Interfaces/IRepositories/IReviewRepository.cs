@@ -4,5 +4,6 @@ namespace Book.Models
     {
         Task<Review> AddReviewAsync(int bookId, int userId, ReviewRequest reviewRequest);
         Task<bool> RemoveReviewAsync(int reviewId);
+        Task<Review> FindReviewAsync(int reviewId, int userId);
     }
 }

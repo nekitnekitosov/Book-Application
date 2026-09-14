@@ -15,7 +15,6 @@ namespace Book
             var book = await _context.Books.FirstOrDefaultAsync(b => b.BookId == bookId);
 
             if(book == null) throw new NotFoundException("Книга не найдена");
-
             if(await _context.Reviews.AnyAsync(r => r.BookId == bookId && r.UserId == userId)) throw new ConflictException("Вы уже оставляли отзыв");
 
             var newReview = new Review
@@ -45,6 +44,14 @@ namespace Book
             }
 
             return false;
+        }
+        public async Task<Review> FindReviewAsync(int reviewId, int userId)
+        {
+            var review = await _context.Reviews.FirstOrDefaultAsync(a => a.Id == reviewId);
+
+            if(review == null) throw new NotFoundException("Отзыв не найден");
+
+            return review;
         }
     }
 }
