@@ -62,6 +62,8 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
 
+builder.Services.AddHostedService<RefreshTokenCleanerService>();
+
 var key = Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

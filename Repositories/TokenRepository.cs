@@ -53,5 +53,13 @@ namespace Book.Models
 
             await _context.SaveChangesAsync();
         }
+        public async Task<int> DeleteExpireRefreshTokensAsync()
+        {
+            var refreshTokens = await _context.RefreshTokens
+                .Where(a => a.IsRevoked == true || a.ExpiresDate < DateTime.UtcNow)
+                .ExecuteDeleteAsync();
+            
+            return refreshTokens;
+        }
     }
 }
