@@ -14,6 +14,15 @@ namespace Book
         {
             _reviewService = reviewService;
         }
+        [HttpGet("top")]
+        public async Task<IActionResult> GetTopBooks(int top)
+        {
+            var books = await _reviewService.GetTopBooks(top);
+
+            if(books == null) return NotFound("Список книг пуст");
+
+            return Ok(books);
+        }
         [Authorize]
         [HttpPost("{bookId}/review")]
         public async Task<IActionResult> AddReview(int bookId, [FromBody] ReviewRequest reviewRequest)

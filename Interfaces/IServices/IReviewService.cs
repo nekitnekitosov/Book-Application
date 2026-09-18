@@ -6,5 +6,6 @@ namespace Book
     {
         Task<Review> AddReview(int bookId, int userId, ReviewRequest reviewRequest);
         Task<bool> RemoveReview(int reviewId, int userId, string userRole);
+        Task<List<GetReviewResponse>> GetTopBooks(int top);
     }
 }

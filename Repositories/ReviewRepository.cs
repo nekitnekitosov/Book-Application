@@ -45,6 +45,26 @@ namespace Book
 
             return false;
         }
+        public async Task<List<GetReviewResponse>> GetBooksAverageRatingAsync(int top)
+        {
+            var books = await _context.Books
+                .Where(a => a.Reviews.Any())
+                .Select(a => new GetReviewResponse
+                {
+                    BookId = a.BookId,
+                    BookName = a.BookName,
+                    AuthorName = a.AuthorName,
+                    YearOfPublish = a.YearOfPublish,
+                    AverageRating = a.Reviews.Average(r => r.Rating),
+                    ReviewsCount = a.Reviews.Count()
+                })
+                .OrderByDescending(x => x.AverageRating)
+                .ThenByDescending(x => x.ReviewsCount)
+                .Take(top)
+                .ToListAsync();
+
+            return books;
+        }
         public async Task<Review> FindReviewAsync(int reviewId, int userId)
         {
             var review = await _context.Reviews.FirstOrDefaultAsync(a => a.Id == reviewId);

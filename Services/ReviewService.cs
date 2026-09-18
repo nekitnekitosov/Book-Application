@@ -9,6 +9,19 @@ namespace Book
         {
             _reviewRepository = reviewRepository;
         }
+        public async Task<List<GetReviewResponse>> GetTopBooks(int top)
+        {
+            if(top <= 0) throw new ValidationException("Число не может быть меньше или равно 0");
+
+            var books = await _reviewRepository.GetBooksAverageRatingAsync(top);
+
+            foreach(var book in books)
+            {
+                book.AverageRating = Math.Round(book.AverageRating, 1);
+            }
+
+            return books;
+        }
         public async Task<Review> AddReview(int bookId, int userId, ReviewRequest reviewRequest)
         {
             if(reviewRequest.Rating < 0 || reviewRequest.Rating > 5) throw new ValidationException("Выберите от 0 до 5");
