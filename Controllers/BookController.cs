@@ -16,11 +16,11 @@ namespace Book.Controllers
         {
             _bookService = bookService;
         }
-        [Authorize]
-        [HttpGet("books")]
-        public async Task<IActionResult> GetBooks(int page, int pageSize)
+        //[Authorize]
+        [HttpGet("book")]
+        public async Task<IActionResult> GetBooks(int page, int pageSize, [FromQuery] GetBookSortRequest getBookSortRequest)
         {
-            var books = await _bookService.GetBooks(page, pageSize);
+            var books = await _bookService.GetBooks(page, pageSize, getBookSortRequest);
 
             return Ok(books);
         }

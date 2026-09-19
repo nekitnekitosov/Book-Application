@@ -12,11 +12,23 @@ namespace Book.Repositories
         {
             _context = context;
         }
-        public async Task<PagedResult<GetBookResponse>> GetBooksAsync(int page, int pageSize)
+        public async Task<PagedResult<GetBookResponse>> GetBooksAsync(int page, int pageSize, GetBookSortRequest getBookSortRequest)
         {
             var querry = _context.Books.AsQueryable();
-            var totalCount = await querry.CountAsync();
             
+            querry = (getBookSortRequest.BookSortBy, getBookSortRequest.SortDirection) switch
+            {
+                (BookSortBy.Name, SortDirection.Asc) => querry.OrderBy(b => b.BookName),
+                (BookSortBy.Name, SortDirection.Desc) => querry.OrderByDescending(b => b.BookName),
+
+                (BookSortBy.Year, SortDirection.Asc) => querry.OrderBy(b => b.YearOfPublish),
+                (BookSortBy.Year, SortDirection.Desc) => querry.OrderByDescending(b => b.YearOfPublish),
+
+               _ => querry.OrderBy(b => b.BookName) // по умолчанию
+            };
+
+            var totalCount = await querry.CountAsync();
+
             var books = await querry
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
