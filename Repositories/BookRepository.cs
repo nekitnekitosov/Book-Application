@@ -12,11 +12,11 @@ namespace Book.Repositories
         {
             _context = context;
         }
-        public async Task<PagedResult<GetBookResponse>> GetBooksAsync(int page, int pageSize, GetBookSortRequest getBookSortRequest)
+        public async Task<PagedResult<GetBookResponse>> GetBooksAsync(int page, int pageSize, BookSortBy bookSortBy, SortDirection sortDirection)
         {
             var querry = _context.Books.AsQueryable();
             
-            querry = (getBookSortRequest.BookSortBy, getBookSortRequest.SortDirection) switch
+            querry = (bookSortBy, sortDirection) switch
             {
                 (BookSortBy.Name, SortDirection.Asc) => querry.OrderBy(b => b.BookName),
                 (BookSortBy.Name, SortDirection.Desc) => querry.OrderByDescending(b => b.BookName),

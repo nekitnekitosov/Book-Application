@@ -16,11 +16,11 @@ namespace Book
         {
             return await _bookRepository.PutBookAsync(bookRequest, bookId);
         }
-        public async Task<PagedResult<GetBookResponse>> GetBooks(int page, int pageSize, GetBookSortRequest getBookSortRequest)
+        public async Task<PagedResult<GetBookResponse>> GetBooks(int page, int pageSize, BookSortBy bookSortBy, SortDirection sortDirection)
         {
             if(page <= 0 || pageSize <= 0) throw new ValidationException("Укажите page или pageSize");
-            
-            return await _bookRepository.GetBooksAsync(page, pageSize, getBookSortRequest);
+
+            return await _bookRepository.GetBooksAsync(page, pageSize, bookSortBy, sortDirection);
         }
         public async Task<Boook> AddBook(BookRequest bookRequest)
         {

@@ -18,9 +18,9 @@ namespace Book.Controllers
         }
         //[Authorize]
         [HttpGet("book")]
-        public async Task<IActionResult> GetBooks(int page, int pageSize, [FromQuery] GetBookSortRequest getBookSortRequest)
+        public async Task<IActionResult> GetBooks(int page, int pageSize, [FromQuery] BookSortBy bookSortBy = BookSortBy.Name, [FromQuery] SortDirection sortDirection = SortDirection.Asc)
         {
-            var books = await _bookService.GetBooks(page, pageSize, getBookSortRequest);
+            var books = await _bookService.GetBooks(page, pageSize, bookSortBy, sortDirection);
 
             return Ok(books);
         }
