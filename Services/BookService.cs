@@ -14,11 +14,14 @@ namespace Book
         }
         public async Task<Boook> PutBook(JsonPatchDocument<BookUpdateDto> bookRequest, int bookId)
         {
+            if (bookRequest == null) throw new ValidationException("Тело запроса пустое");
+            if (bookId < 0) throw new ValidationException("ID книги не может быть меньше или равно нулю");
+
             return await _bookRepository.PutBookAsync(bookRequest, bookId);
         }
         public async Task<PagedResult<GetBookResponse>> GetBooks(int page, int pageSize, BookSortBy bookSortBy, SortDirection sortDirection)
         {
-            if(page <= 0 || pageSize <= 0) throw new ValidationException("Укажите page или pageSize");
+            if (page <= 0 || pageSize <= 0) throw new ValidationException("Укажите page или pageSize");
 
             return await _bookRepository.GetBooksAsync(page, pageSize, bookSortBy, sortDirection);
         }
@@ -26,19 +29,21 @@ namespace Book
         {
             var requestFind = await _bookRepository.FindBookAsync(bookRequest.BookName);
 
-            if (requestFind != null) throw new ConflictException("Такая книга уже существует в базе!");;
+            if (requestFind != null) throw new ConflictException("Такая книга уже существует в базе!"); ;
 
             var requestAdd = await _bookRepository.AddBookAsync(bookRequest);
 
-            if (requestAdd == null) throw new NotFoundException("Ошибка! Пустой запрос");;
+            if (requestAdd == null) throw new NotFoundException("Ошибка! Пустой запрос"); ;
 
-            return new Boook {
-            BookName = bookRequest.BookName, 
-            AuthorName = bookRequest.AuthorName, 
-            YearOfPublish = bookRequest.YearOfPublish,
-            Description = bookRequest.Description, 
-            CreatedAt = DateTime.UtcNow, 
-            UpdatedAt = DateTime.UtcNow };
+            return new Boook
+            {
+                BookName = bookRequest.BookName,
+                AuthorName = bookRequest.AuthorName,
+                YearOfPublish = bookRequest.YearOfPublish,
+                Description = bookRequest.Description,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
         }
         public async Task<bool> DeleteBook(int id)
         {
