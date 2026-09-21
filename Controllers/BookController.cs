@@ -1,8 +1,5 @@
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Book.Interfaces;
-using Microsoft.AspNetCore.Authorization;
-using Azure;
 using Microsoft.AspNetCore.JsonPatch;
 
 namespace Book.Controllers
@@ -17,12 +14,17 @@ namespace Book.Controllers
             _bookService = bookService;
         }
         //[Authorize]
-        [HttpGet("book")]
+        [HttpGet("books")]
         public async Task<IActionResult> GetBooks(int page, int pageSize, [FromQuery] BookSortBy bookSortBy = BookSortBy.Name, [FromQuery] SortDirection sortDirection = SortDirection.Asc)
         {
             var books = await _bookService.GetBooks(page, pageSize, bookSortBy, sortDirection);
 
             return Ok(books);
+        }
+       [HttpGet("book{id}")]
+        public async Task<IActionResult> GetBook(int id)
+        {
+           return Ok(await _bookService.GetBook(id));
         }
         // [Authorize(Roles = "Admin")]
         [HttpPost("book")]

@@ -19,11 +19,17 @@ namespace Book
 
             return await _bookRepository.PutBookAsync(bookRequest, bookId);
         }
-        public async Task<PagedResult<GetBookResponse>> GetBooks(int page, int pageSize, BookSortBy bookSortBy, SortDirection sortDirection)
+        public async Task<PagedResult<GetBooksResponse>> GetBooks(int page, int pageSize, BookSortBy bookSortBy, SortDirection sortDirection)
         {
             if (page <= 0 || pageSize <= 0) throw new ValidationException("Укажите page или pageSize");
 
             return await _bookRepository.GetBooksAsync(page, pageSize, bookSortBy, sortDirection);
+        }
+        public async Task<GetBookResponse> GetBook(int bookId)
+        {
+            if(bookId < 0) throw new ValidationException("Введите корректный id книги");
+
+            return await _bookRepository.GetBookAsync(bookId);
         }
         public async Task<Boook> AddBook(BookRequest bookRequest)
         {

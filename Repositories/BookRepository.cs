@@ -12,7 +12,7 @@ namespace Book.Repositories
         {
             _context = context;
         }
-        public async Task<PagedResult<GetBookResponse>> GetBooksAsync(int page, int pageSize, BookSortBy bookSortBy, SortDirection sortDirection)
+        public async Task<PagedResult<GetBooksResponse>> GetBooksAsync(int page, int pageSize, BookSortBy bookSortBy, SortDirection sortDirection)
         {
             var querry = _context.Books.AsQueryable();
             
@@ -32,7 +32,7 @@ namespace Book.Repositories
             var books = await querry
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .Select(a => new GetBookResponse
+                .Select(a => new GetBooksResponse
                 {
                     NameBook = a.BookName,
                     AuthorName = a.AuthorName,
@@ -42,7 +42,7 @@ namespace Book.Repositories
                 })
                 .ToListAsync();
 
-            return new PagedResult<GetBookResponse>
+            return new PagedResult<GetBooksResponse>
             {
                 Items = books,
                 TotalCount = totalCount,
@@ -50,6 +50,32 @@ namespace Book.Repositories
                 PageSize = pageSize
             };
         }    
+        public async Task<GetBookResponse> GetBookAsync(int bookId)
+        {
+            var book = await _context.Books
+                .Where(a => a.BookId == bookId)
+                .Select(b => new GetBookResponse
+                {
+                    NameBook = b.BookName,
+                    AuthorName = b.AuthorName,
+                    YearOfPublish = b.YearOfPublish,
+                    Description = b.Description,
+                    Rating = Math.Round(b.Reviews.Average(r => r.Rating), 1),
+                    Reviews = b.Reviews.Select(r => new ReviewDTO
+                    {
+                        Id = r.Id,
+                        Username = r.User.UserName,
+                        Rating = r.Rating,
+                        Comment = r.Comment,
+                        CreatedAt = r.CreatedAt
+                    }).ToList()
+                })
+                .FirstOrDefaultAsync();
+
+            if(book == null) throw new NotFoundException("Книга не найдена");
+
+            return book;
+        }
         public async Task<Boook> AddBookAsync(BookRequest bookRequest)
         {
             var book = new Boook

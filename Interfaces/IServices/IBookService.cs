@@ -6,7 +6,8 @@ namespace Book.Interfaces
     public interface IBookService
     {
         Task<Boook> PutBook(JsonPatchDocument<BookUpdateDto> bookRequest, int bookId);
-        Task<PagedResult<GetBookResponse>> GetBooks(int page, int pageSize, BookSortBy bookSortBy, SortDirection sortDirection);
+        Task<PagedResult<GetBooksResponse>> GetBooks(int page, int pageSize, BookSortBy bookSortBy, SortDirection sortDirection);
+        Task<GetBookResponse> GetBook(int bookId);
         Task<Boook> AddBook(BookRequest bookRequest);
         Task<bool> DeleteBook(int id);
     }
