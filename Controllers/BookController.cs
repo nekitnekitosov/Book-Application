@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Book.Interfaces;
 using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Book.Controllers
 {
@@ -13,7 +14,7 @@ namespace Book.Controllers
         {
             _bookService = bookService;
         }
-        //[Authorize]
+        [Authorize]
         [HttpGet("books")]
         public async Task<IActionResult> GetBooks(int page, int pageSize, [FromQuery] BookSortBy bookSortBy = BookSortBy.Name, [FromQuery] SortDirection sortDirection = SortDirection.Asc)
         {
@@ -21,12 +22,13 @@ namespace Book.Controllers
 
             return Ok(books);
         }
+        [Authorize]
        [HttpGet("book{id}")]
         public async Task<IActionResult> GetBook(int id)
         {
            return Ok(await _bookService.GetBook(id));
         }
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPost("book")]
         public async Task<IActionResult> AddBook([FromBody] BookRequest bookRequest)
         {
@@ -36,7 +38,7 @@ namespace Book.Controllers
 
             return Ok(book);
         }
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("book{id}")]
         public async Task<IActionResult> DeleteBook(int id)
         {
@@ -46,56 +48,15 @@ namespace Book.Controllers
 
             return BadRequest();
         }
+        [Authorize(Roles = "Admin")]
         [HttpPatch("book/{bookId}")]
         public async Task<IActionResult> PutBook([FromBody] JsonPatchDocument<BookUpdateDto> patchDoc, int bookId)
         {
-            // var request = await _bookService.PutBook(bookRequest, bookId);
-            // if (!ModelState.IsValid)
-            // {
-            //     var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
-            //     return BadRequest(new { errors });
-            // }
-            // return Ok(new
-            // {
-            //     request.BookId,
-            //     request.BookName,
-            //     request.AuthorName,
-            //     request.YearOfPublish,
-            //     request.Description,
-            //     request.UpdatedAt
-            // });
             if (patchDoc == null || patchDoc.Operations == null || patchDoc.Operations.Count == 0)
                 return BadRequest(new { error = "Запрос не содержит операций для обновления" });
 
             var updatedBook = await _bookService.PutBook(patchDoc, bookId);
             return Ok(updatedBook);
-        }
-        [HttpPatch("test")]
-        public IActionResult TestPatch([FromBody] JsonPatchDocument<BookUpdateDto> patchDoc)
-        {
-            if (patchDoc == null)
-                return BadRequest("patchDoc is null");
-
-            if (patchDoc.Operations == null || patchDoc.Operations.Count == 0)
-                return BadRequest("No operations");
-
-            // Создаём тестовый объект
-            var test = new BookUpdateDto
-            {
-                BookName = "Старое название",
-                AuthorName = "Старый автор"
-            };
-
-            // Применяем патч
-            patchDoc.ApplyTo(test);
-
-            // Возвращаем результат
-            return Ok(new
-            {
-                Before = new { test.BookName, test.AuthorName },
-                After = new { test.BookName, test.AuthorName },
-                Operations = patchDoc.Operations.Select(o => new { o.op, o.path, o.value })
-            });
         }
     }
 }
