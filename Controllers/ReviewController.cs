@@ -14,6 +14,7 @@ namespace Book
         {
             _reviewService = reviewService;
         }
+        [Authorize]
         [HttpGet("top")]
         public async Task<IActionResult> GetTopBooks(int top)
         {
