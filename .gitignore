@@ -6,3 +6,6 @@ obj/
 .idea/
 appsettings.json
 appsettings.json
+.vscode/
+appsettings.Development.json
+*.db
