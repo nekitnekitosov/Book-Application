@@ -38,7 +38,7 @@ namespace Book.Repositories
                     AuthorName = a.AuthorName,
                     YearOfPublish = a.YearOfPublish,
                     Description = a.Description,
-                    Rating = Math.Round(a.Reviews.Average(r => r.Rating), 1)
+                    Rating = a.Reviews.Any() ? Math.Round(a.Reviews.Average(r => r.Rating), 1) : 0
                 })
                 .ToListAsync();
 

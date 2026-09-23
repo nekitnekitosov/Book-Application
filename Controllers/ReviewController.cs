@@ -25,7 +25,7 @@ namespace Book
             return Ok(books);
         }
         [Authorize]
-        [HttpPost("{bookId}/review")]
+        [HttpPost("review/{bookId}")]
         public async Task<IActionResult> AddReview(int bookId, [FromBody] ReviewRequest reviewRequest)
         {
             var request = await _reviewService.AddReview(bookId, int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value), reviewRequest);
@@ -34,7 +34,7 @@ namespace Book
 
             return Ok(new {Status = "Успешно добавили отзыв", Rating = reviewRequest.Rating, Comment = reviewRequest.Comment});
         }
-        [HttpDelete("{reviewId}review")]
+        [HttpDelete("review/{reviewId}")]
         public async Task<IActionResult> RemoveReview (int reviewId)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier);

@@ -49,13 +49,13 @@ namespace Book.Controllers
             return BadRequest();
         }
         [Authorize(Roles = "Admin")]
-        [HttpPatch("book/{bookId}")]
-        public async Task<IActionResult> PutBook([FromBody] JsonPatchDocument<BookUpdateDto> patchDoc, int bookId)
+        [HttpPatch("book{id}")]
+        public async Task<IActionResult> PutBook([FromBody] JsonPatchDocument<BookUpdateDto> patchDoc, int id)
         {
             if (patchDoc == null || patchDoc.Operations == null || patchDoc.Operations.Count == 0)
                 return BadRequest(new { error = "Запрос не содержит операций для обновления" });
 
-            var updatedBook = await _bookService.PutBook(patchDoc, bookId);
+            var updatedBook = await _bookService.PutBook(patchDoc, id);
             return Ok(updatedBook);
         }
     }

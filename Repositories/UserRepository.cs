@@ -19,9 +19,9 @@ namespace Book
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == userLoginRequest.Username);
             var accessPassword = BCrypt.Net.BCrypt.Verify(userLoginRequest.Password, user.PasswordHash);
-            
-            if(!accessPassword) throw new UnauthorizedException("Неправильный пароль");
-            
+
+            if (!accessPassword) throw new UnauthorizedException("Неправильный пароль");
+
             return user;
         }
         public async Task<User> RegisterUserAsync(UserRequest userRequest)
@@ -39,14 +39,14 @@ namespace Book
             _context.Users.Add(newUser);
 
             await _context.SaveChangesAsync();
-            
+
             return newUser;
         }
         public async Task<bool> FindUser(string username)
         {
             var user = await _context.Users.FirstOrDefaultAsync(a => a.UserName == username);
 
-            if(user != null) return true;
+            if (user != null) return true;
 
             return false;
         }
