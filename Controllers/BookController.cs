@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Book.Interfaces;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Book.Controllers
 {
@@ -27,11 +28,13 @@ namespace Book.Controllers
         {
            return Ok(await _bookService.GetBook(id));
         }
-        [Authorize(Roles = "Admin")]
         [HttpPost("book")]
         public async Task<IActionResult> AddBook([FromBody] BookRequest bookRequest)
         {
-            var book = await _bookService.AddBook(bookRequest);
+            var role = User.FindFirst(ClaimTypes.Role).Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            var book = await _bookService.AddBook(bookRequest, role, int.Parse(userId));
 
             if (book == null) return BadRequest();
 

@@ -8,6 +8,7 @@ namespace Book.Models
         Task<PagedResult<GetBooksResponse>> GetBooksAsync(int page, int pageSize, BookSortBy bookSortBy, SortDirection sortDirection);
         Task<GetBookResponse> GetBookAsync(int bookId);
         Task<Boook> AddBookAsync(BookRequest bookRequest);
+        Task<ModerationBook> AddModerationBookAsync(BookRequest bookRequest, int userId);
         Task<bool> DeleteBookAsync(int id);
         Task<string> FindBookAsync(string nameBook);
     }

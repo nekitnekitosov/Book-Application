@@ -94,6 +94,27 @@ namespace Book.Repositories
 
             return book;
         }
+        public async Task<ModerationBook> AddModerationBookAsync(BookRequest bookRequest, int userId)
+        {
+            var book = new ModerationBook
+            {
+                UserId = userId,
+                BookName = bookRequest.BookName,
+                AuthorName = bookRequest.AuthorName,
+                YearOfPublish = bookRequest.YearOfPublish,
+                Description = bookRequest.Description,
+                Status = ModerationStatus.Pending,
+                ModeratorComment = "",
+                CreatedAt = bookRequest.CreatedAt,
+                UpdatedAt = bookRequest.UpdatedAt
+            };
+
+            _context.ModerationBooks.Add(book);
+
+            await _context.SaveChangesAsync();
+
+            return book;
+        }
         public async Task<bool> DeleteBookAsync(int id)
         {
             var book = await _context.Books.FindAsync(id);
@@ -136,11 +157,13 @@ namespace Book.Repositories
         }
         public async Task<string> FindBookAsync(string nameBook)
         {
-            var request = await _context.Books.FirstOrDefaultAsync(a => a.BookName == nameBook);
-
-            if (request == null) return null;
-
-            return request.BookName;
+            var findBook = await _context.Books.FirstOrDefaultAsync(a => a.BookName == nameBook);
+            var findModerationBook = await _context.ModerationBooks.FirstOrDefaultAsync(a => a.BookName == nameBook);
+            
+            if (findBook != null) return findBook.BookName;
+            else if(findModerationBook != null) return findModerationBook.BookName;
+            
+            return null;
         }
     }
 }

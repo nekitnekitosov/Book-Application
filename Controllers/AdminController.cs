@@ -15,5 +15,12 @@ namespace Book
         {
             return Ok(await _adminService.GetModerationBooks());
         }
+        [HttpPost("moderation{bookId}")]
+        public async Task<IActionResult> ModerateBook(int bookId, string comment, ModerationStatus moderationStatus)
+        {
+            var request = await _adminService.ModerateBook(bookId, comment, moderationStatus);
+
+            return Ok(new {Status = "Success"});
+        }
     }
 }

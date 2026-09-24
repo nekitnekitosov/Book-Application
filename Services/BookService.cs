@@ -31,15 +31,15 @@ namespace Book
 
             return await _bookRepository.GetBookAsync(bookId);
         }
-        public async Task<Boook> AddBook(BookRequest bookRequest)
+        public async Task<Boook> AddBook(BookRequest bookRequest, string role, int userId)
         {
             var requestFind = await _bookRepository.FindBookAsync(bookRequest.BookName);
 
             if (requestFind != null) throw new ConflictException("Такая книга уже существует в базе!"); ;
 
-            var requestAdd = await _bookRepository.AddBookAsync(bookRequest);
+            if(role == "User") await _bookRepository.AddModerationBookAsync(bookRequest, userId);
 
-            if (requestAdd == null) throw new NotFoundException("Ошибка! Пустой запрос"); ;
+            if(role == "Admin") await _bookRepository.AddBookAsync(bookRequest);
 
             return new Boook
             {

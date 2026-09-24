@@ -18,5 +18,11 @@ namespace Book
 
             return books;
         }
+        public async Task<bool> ModerateBook(int bookId, string comment, ModerationStatus moderationStatus)
+        {
+            if(bookId <= 0 ) throw new ValidationException("Введите номер книги");
+
+            return await _adminRepository.ModerateAsync(bookId, comment, moderationStatus);
+        }
     }
 }
