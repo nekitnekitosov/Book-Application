@@ -15,7 +15,7 @@ namespace Book.Repositories
         public async Task<PagedResult<GetBooksResponse>> GetBooksAsync(int page, int pageSize, BookSortBy bookSortBy, SortDirection sortDirection)
         {
             var querry = _context.Books.AsQueryable();
-            
+
             querry = (bookSortBy, sortDirection) switch
             {
                 (BookSortBy.Name, SortDirection.Asc) => querry.OrderBy(b => b.BookName),
@@ -24,7 +24,7 @@ namespace Book.Repositories
                 (BookSortBy.Year, SortDirection.Asc) => querry.OrderBy(b => b.YearOfPublish),
                 (BookSortBy.Year, SortDirection.Desc) => querry.OrderByDescending(b => b.YearOfPublish),
 
-               _ => querry.OrderBy(b => b.BookName) // по умолчанию
+                _ => querry.OrderBy(b => b.BookName) // по умолчанию
             };
 
             var totalCount = await querry.CountAsync();
@@ -49,7 +49,7 @@ namespace Book.Repositories
                 Page = page,
                 PageSize = pageSize
             };
-        }    
+        }
         public async Task<GetBookResponse> GetBookAsync(int bookId)
         {
             var book = await _context.Books
@@ -72,7 +72,7 @@ namespace Book.Repositories
                 })
                 .FirstOrDefaultAsync();
 
-            if(book == null) throw new NotFoundException("Книга не найдена");
+            if (book == null) throw new NotFoundException("Книга не найдена");
 
             return book;
         }
@@ -98,11 +98,11 @@ namespace Book.Repositories
         {
             var book = await _context.Books.FindAsync(id);
 
-            if(book != null)
+            if (book != null)
             {
                 _context.Books.Remove(book);
-               await _context.SaveChangesAsync();
-               return true;
+                await _context.SaveChangesAsync();
+                return true;
             }
 
             return false;
@@ -111,7 +111,7 @@ namespace Book.Repositories
         {
             var book = await _context.Books.FirstOrDefaultAsync(a => a.BookId == idBook);
 
-            if(book == null) throw new NotFoundException("Книга не найдена!");
+            if (book == null) throw new NotFoundException("Книга не найдена!");
 
             var bookDto = new BookUpdateDto
             {
@@ -123,7 +123,7 @@ namespace Book.Repositories
             };
 
             bookRequest.ApplyTo(bookDto);
-        
+
             book.BookName = bookDto.BookName;
             book.AuthorName = bookDto.AuthorName;
             book.YearOfPublish = bookDto.YearOfPublish;
@@ -138,9 +138,9 @@ namespace Book.Repositories
         {
             var request = await _context.Books.FirstOrDefaultAsync(a => a.BookName == nameBook);
 
-            if(request == null) return null;
+            if (request == null) return null;
 
-           return request.BookName;
+            return request.BookName;
         }
     }
 }

@@ -10,6 +10,7 @@ namespace Book.Models
         public DbSet<User> Users {get;set;}
         public DbSet<RefreshTokens> RefreshTokens {get;set;}
         public DbSet<Review> Reviews {get;set;}
+        public DbSet<ModerationBook> ModerationBooks {get;set;}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -85,6 +86,17 @@ namespace Book.Models
                 
                 enity.Property(r => r.UpdatedAt)
                     .IsRequired(false); // заполнится при обновлени пользователя
+            });
+       
+            modelBuilder.Entity<ModerationBook>(enity =>
+            {
+                enity.HasKey(e => e.BookId);
+                enity.HasIndex(e => e.Status);
+                enity.Property(e => e.Status).HasConversion<string>();
+                enity.HasOne(e => e.User)
+                    .WithMany()
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }

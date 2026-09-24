@@ -5,8 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Book.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
+
     public class BookController : ControllerBase
     {
         private readonly IBookService _bookService;
