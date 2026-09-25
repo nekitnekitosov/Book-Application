@@ -22,11 +22,12 @@ namespace Book.Controllers
 
             return Ok(books);
         }
+
         [Authorize]
-       [HttpGet("book{id}")]
+        [HttpGet("book{id}")]
         public async Task<IActionResult> GetBook(int id)
         {
-           return Ok(await _bookService.GetBook(id));
+            return Ok(await _bookService.GetBook(id));
         }
         [HttpPost("book")]
         public async Task<IActionResult> AddBook([FromBody] BookRequest bookRequest)

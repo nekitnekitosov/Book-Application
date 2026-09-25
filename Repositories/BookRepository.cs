@@ -159,10 +159,10 @@ namespace Book.Repositories
         {
             var findBook = await _context.Books.FirstOrDefaultAsync(a => a.BookName == nameBook);
             var findModerationBook = await _context.ModerationBooks.FirstOrDefaultAsync(a => a.BookName == nameBook);
-            
+
             if (findBook != null) return findBook.BookName;
-            else if(findModerationBook != null) return findModerationBook.BookName;
-            
+            else if (findModerationBook != null) return findModerationBook.BookName;
+
             return null;
         }
     }
