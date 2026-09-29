@@ -87,7 +87,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(key)
         };
-         options.Events = new JwtBearerEvents
+        options.Events = new JwtBearerEvents
         {
             OnMessageReceived = context =>
             {
@@ -124,6 +124,15 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers(); 
+app.MapControllers();
+
+app.MapGet("/me", async (IUserService userService, ClaimsPrincipal user) =>
+{
+    var client = await userService.GetMeUser(Int32.Parse(user.FindFirst(ClaimTypes.NameIdentifier)?.Value));
+    if (client == null) return Results.NotFound("Клиент не найден");
+    return Results.Ok(client);
+})
+    .RequireAuthorization()
+    .WithTags("User");
 
 app.Run();
