@@ -10,9 +10,11 @@ namespace Book
     public class ReviewController : ControllerBase
     {
         private readonly IReviewService _reviewService;
-        public ReviewController(IReviewService reviewService)
+        private readonly ILogger<ReviewController> _logger;
+        public ReviewController(IReviewService reviewService, ILogger<ReviewController> logger)
         {
             _reviewService = reviewService;
+            _logger = logger;
         }
         [Authorize]
         [HttpGet("top")]
@@ -20,7 +22,7 @@ namespace Book
         {
             var books = await _reviewService.GetTopBooks(top);
 
-            if(books == null) return NotFound("Список книг пуст");
+            if (books == null) return NotFound("Список книг пуст");
 
             return Ok(books);
         }
@@ -29,22 +31,22 @@ namespace Book
         public async Task<IActionResult> AddReview(int bookId, [FromBody] ReviewRequest reviewRequest)
         {
             var request = await _reviewService.AddReview(bookId, int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value), reviewRequest);
-            
-            if(request == null) return BadRequest("Ошибка");
 
-            return Ok(new {Status = "Успешно добавили отзыв", Rating = reviewRequest.Rating, Comment = reviewRequest.Comment});
+            if (request == null) return BadRequest("Ошибка");
+
+            return Ok(new { Status = "Успешно добавили отзыв", Rating = reviewRequest.Rating, Comment = reviewRequest.Comment });
         }
         [HttpDelete("review/{reviewId}")]
-        public async Task<IActionResult> RemoveReview (int reviewId)
+        public async Task<IActionResult> RemoveReview(int reviewId)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier);
             var userRole = User.FindFirst(ClaimTypes.Role)?.Value ?? "User";
 
-            if(userId == null) return Unauthorized(new {error = "ID пользователя не найдено в токене"});
+            if (userId == null) return Unauthorized(new { error = "ID пользователя не найдено в токене" });
 
             var request = await _reviewService.RemoveReview(reviewId, int.Parse(userId.Value), userRole);
 
-            if(request == false) return BadRequest("Не получилось удалить отзыв");
+            if (request == false) return BadRequest("Не получилось удалить отзыв");
 
             return Ok(request);
         }

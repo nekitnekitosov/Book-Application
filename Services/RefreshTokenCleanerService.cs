@@ -11,8 +11,8 @@ namespace Book
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("Сервис по очистке токенов запущен!");
-            
+            _logger.LogInformation("[SERVICE] Сервис по очистке токенов запущен!");
+
             while (!stoppingToken.IsCancellationRequested)
             {
                 try
@@ -22,12 +22,12 @@ namespace Book
                         var tokenRepository = scope.ServiceProvider.GetRequiredService<ITokenRepository>();
 
                         var deletedCount = await tokenRepository.DeleteExpireRefreshTokensAsync();
-                        _logger.LogInformation($"Удалено {deletedCount} токенов");
+                        _logger.LogInformation("[SERVICE] Удалено {deletedCount} токенов", deletedCount);
                     }
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError($"Ошибка: {ex.Message}");
+                    _logger.LogError("[SERVICE] Ошибка: {ex.Message}", ex.Message);
                 }
 
                 await Task.Delay(TimeSpan.FromHours(1), stoppingToken);

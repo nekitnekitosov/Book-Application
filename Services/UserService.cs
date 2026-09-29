@@ -8,21 +8,19 @@ namespace Book
         private readonly IUserRepository _userRepository;
         private readonly ITokenRepository _tokenRepository;
         private readonly ITokenService _tokenService;
-
         public UserService(IUserRepository userRepository, ITokenService tokenService, ITokenRepository tokenRepository)
         {
             _userRepository = userRepository;
             _tokenRepository = tokenRepository;
-
             _tokenService = tokenService;
         }
         public async Task<User> GetMeUser(int userId)
         {
-           var user = await _userRepository.GetMeUserAsync(userId);
+            var user = await _userRepository.GetMeUserAsync(userId);
 
-           if(user == null) throw new NotFoundException("Пользователь не найден");
+            if (user == null) throw new NotFoundException("Пользователь не найден");
 
-           return user;
+            return user;
         }
         public async Task<LoginResponse> LoginUser(UserLoginRequest userLoginRequest)
         {
