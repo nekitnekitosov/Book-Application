@@ -1,7 +1,0 @@
-bin/
-obj/
-.vscode/
-.git/
-logs/
-*.db
-appsettings.Development.json
