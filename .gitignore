@@ -1,11 +1,27 @@
-@"
+# Build artifacts
 bin/
 obj/
+
+# IDE
 .vs/
 .vscode/
+.idea/
+
+# User-specific
 *.user
+*.suo
+
+# Secrets
 appsettings.Development.json
+secrets.json
+
+# SQLite
 *.db
+
+# Logs
 *.log
 logs/
-"@ | Out-File -FilePath ".gitignore" -Encoding utf8
+
+# OS
+.DS_Store
+Thumbs.db
