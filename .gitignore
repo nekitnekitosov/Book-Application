@@ -1,0 +1,11 @@
+@"
+bin/
+obj/
+.vs/
+.vscode/
+*.user
+appsettings.Development.json
+*.db
+*.log
+logs/
+"@ | Out-File -FilePath ".gitignore" -Encoding utf8
