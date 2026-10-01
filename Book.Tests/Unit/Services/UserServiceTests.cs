@@ -41,7 +41,30 @@ public class UserServiceTests
         await act.Should().ThrowAsync<ConflictException>()
             .WithMessage("С таким именем пользователь уже существует");
     }
-    [Fact]
+
+    [Theory] // тест на валидацию данных в запросе при регистрации
+    [InlineData(null, "12345678")] // null имя
+    [InlineData("", "12345678")] // пустое имя
+    [InlineData("   ", "12345678")] // пробелы в username
+    [InlineData("Tom", "123")] // короткий пароль
+    [InlineData("Tom", "")] // пустой пароль
+    public async Task Register_Should_ThrowValidationException_When_InputIsInvalid(string username, string password)
+    {
+        _mockRepoUser
+            .Setup(u => u.FindUser(It.IsAny<string>()))
+            .ReturnsAsync(false);
+
+        var newUser = new UserRequest
+        {
+            UserName = username,
+            Password = password
+        };
+
+        Func<Task> act = async () => await _userService.RegisterUser(newUser);
+
+        await act.Should().ThrowAsync<ValidationException>();
+    }
+    [Fact] // тест на успешную регистрацию
     public async Task Register_Should_CreateUser_When_UsernameIsFree()
     {
         _mockRepoUser

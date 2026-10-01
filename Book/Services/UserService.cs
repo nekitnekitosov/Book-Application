@@ -43,8 +43,14 @@ namespace Book
         }
         public async Task<User> RegisterUser(UserRequest userRequest)
         {
-            if (await _userRepository.FindUser(userRequest.UserName)) throw new ConflictException("С таким именем пользователь уже существует");
-            if (userRequest.Password.Length < 8) throw new ValidationException("Пароль не может быть меньше 8 символов");
+            if (string.IsNullOrWhiteSpace(userRequest.UserName))
+                throw new ValidationException("Поле username не может быть пустым");
+            if (string.IsNullOrWhiteSpace(userRequest.Password))
+                throw new ValidationException("Поле password не может быть пустым");
+            if (userRequest.Password.Length < 8)
+                throw new ValidationException("Пароль не может быть меньше 8 символов");
+            if (await _userRepository.FindUser(userRequest.UserName))
+                throw new ConflictException("С таким именем пользователь уже существует");
 
             return await _userRepository.RegisterUserAsync(userRequest);
         }

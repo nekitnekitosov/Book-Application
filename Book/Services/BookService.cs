@@ -27,7 +27,7 @@ namespace Book
         }
         public async Task<GetBookResponse> GetBook(int bookId)
         {
-            if(bookId < 0) throw new ValidationException("Введите корректный id книги");
+            if (bookId < 0) throw new ValidationException("Введите корректный id книги");
 
             return await _bookRepository.GetBookAsync(bookId);
         }
@@ -37,9 +37,9 @@ namespace Book
 
             if (requestFind != null) throw new ConflictException("Такая книга уже существует в базе!"); ;
 
-            if(role == "User") await _bookRepository.AddModerationBookAsync(bookRequest, userId);
+            if (role == "User") await _bookRepository.AddModerationBookAsync(bookRequest, userId);
 
-            if(role == "Admin") await _bookRepository.AddBookAsync(bookRequest);
+            if (role == "Admin") await _bookRepository.AddBookAsync(bookRequest);
 
             return new Boook
             {
