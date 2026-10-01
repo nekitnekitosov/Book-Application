@@ -3,21 +3,22 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-namespace Book.Book.Tests.Unit.Services;
+namespace Book.Tests.Unit.Services;
 
 public class BookServiceTests
 {
     private readonly Mock<IBookRepository> _mockRepo;
-    private readonly BookService _sut;
+    private readonly BookService _service;
 
     public BookServiceTests()
     {
         _mockRepo = new Mock<IBookRepository>();
-        _sut = new BookService(_mockRepo.Object);
+        _service = new BookService(_mockRepo.Object);
     }
     [Fact]
     public async Task AddBookAsync_Should_Throw_ConfclictException_When_BookExists()
     {
+
         _mockRepo
             .Setup(r => r.FindBookAsync("1984"))
             .ReturnsAsync("1984");
@@ -33,7 +34,7 @@ public class BookServiceTests
         var role = "Admin";
         var userId = 1;
 
-        Func<Task> act = async () => await _sut.AddBook(request, role, userId);
+        Func<Task> act = async () => await _service.AddBook(request, role, userId);
 
         await act.Should().ThrowAsync<ConflictException>()
             .WithMessage("Такая книга уже существует в базе!");
