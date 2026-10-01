@@ -24,6 +24,8 @@ namespace Book
         }
         public async Task<LoginResponse> LoginUser(UserLoginRequest userLoginRequest)
         {
+            if (string.IsNullOrWhiteSpace(userLoginRequest.Username) || string.IsNullOrWhiteSpace(userLoginRequest.Password))
+                throw new ValidationException("Заполните поля username и password");
             if (!await _userRepository.FindUser(userLoginRequest.Username)) throw new NotFoundException("Такого пользователя не существует!");
 
             var user = await _userRepository.LoginUserAsync(userLoginRequest);

@@ -1,6 +1,7 @@
 using Book.Models;
 using FluentAssertions;
 using Microsoft.AspNetCore.Identity.Data;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.EventHandlers;
 using Moq;
 using Xunit;
 
@@ -21,6 +22,52 @@ public class UserServiceTests
         _mockRepoToken = new Mock<ITokenRepository>();
 
         _userService = new UserService(_mockRepoUser.Object, _mockServiceToken.Object, _mockRepoToken.Object);
+    }
+    [Fact] // тест на успешную авторизацию
+    public async Task Login_Should_ReturnTokens_When_CredentialsAreValid()
+    {
+        _mockRepoUser
+            .Setup(r => r.FindUser("1"))
+            .ReturnsAsync(true);
+
+        _mockRepoUser
+            .Setup(r => r.LoginUserAsync(It.IsAny<UserLoginRequest>()))
+            .ReturnsAsync(new User
+            {
+                UserId = 1,
+                UserName = "1",
+                Role = "User"
+            });
+
+        _mockServiceToken
+            .Setup(r => r.GenerateJwtToken(It.IsAny<User>()))
+            .Returns("access_token");
+        _mockServiceToken
+            .Setup(r => r.GenerateRefreshToken())
+            .Returns("refresh_token");
+
+        _mockRepoToken
+            .Setup(r => r.AddRefreshTokenAsync(It.IsAny<string>(), It.IsAny<int>()))
+            .Returns(Task.CompletedTask);
+
+        var user = new UserLoginRequest
+        {
+            Username = "1",
+            Password = "12345678"
+        };
+
+        var result = await _userService.LoginUser(user);
+
+        result.Should().NotBeNull(); // метод вернул не null
+        result.AccessToken.Should().Be("access_token"); // вернул правильный токен
+        result.RefreshToken.Should().Be("refresh_token"); // вернул правильный токен
+
+        _mockServiceToken.Verify(t => t.GenerateJwtToken(It.IsAny<User>()), Times.Once); // проверка, что вызван один раз
+        _mockServiceToken.Verify(t => t.GenerateRefreshToken(), Times.Once); // проверка, что вызван один раз
+
+        _mockRepoToken.Verify(r => r.AddRefreshTokenAsync(It.IsAny<string>(), It.IsAny<int>()), Times.Once); // проверка, что вызван один раз
+        _mockRepoUser.Verify(r => r.FindUser("1"), Times.Once); // найден пользователь
+        _mockRepoUser.Verify(r => r.LoginUserAsync(It.IsAny<UserLoginRequest>()), Times.Once);
     }
     [Fact]
     public async Task Register_Should_Throw_Conflict_When_UsernameExists()
