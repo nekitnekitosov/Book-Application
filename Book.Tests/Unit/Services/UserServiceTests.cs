@@ -167,4 +167,20 @@ public class UserServiceTests
         _mockServiceToken.Verify(t => t.GenerateJwtToken(It.IsAny<User>()), Times.Never);
         _mockRepoToken.Verify(t => t.AddRefreshTokenAsync(It.IsAny<string>(), It.IsAny<int>()), Times.Never);
     }
+    [Fact] // тест на несуществующего user
+    public async Task Login_Should_ThrowNotFoundException_When_UserNotFound()
+    {
+        _mockRepoUser
+            .Setup(r => r.FindUser("1"))
+            .ReturnsAsync(false);
+        var user = new UserLoginRequest
+        {
+            Username = "1",
+            Password = "12345678"
+        };
+
+        Func<Task> act = async () => await _userService.LoginUser(user);
+
+        await act.Should().ThrowAsync<NotFoundException>();
+    }
 }
