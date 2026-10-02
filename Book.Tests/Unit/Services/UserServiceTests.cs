@@ -23,7 +23,7 @@ public class UserServiceTests
 
         _userService = new UserService(_mockRepoUser.Object, _mockServiceToken.Object, _mockRepoToken.Object);
     }
-    [Fact] // тест на успешную авторизацию
+    [Fact] // тест на успешную регистрацию
     public async Task Login_Should_ReturnTokens_When_CredentialsAreValid()
     {
         _mockRepoUser
@@ -142,5 +142,29 @@ public class UserServiceTests
         result.UserName.Should().Be("123"); // Проверка, что имена совпадают с запросом
 
         _mockRepoUser.Verify(r => r.RegisterUserAsync(newUser), Times.Once); // проверяем, что метод вызвался ровно один раз, times.once - гарантирует, что пользователь создан один раз
+    }
+    [Fact] // неверный пароль при авторизации
+    public async Task Login_Should_ThrowUnauthorizedException_When_PasswordIsWrong()
+    {
+        _mockRepoUser
+            .Setup(r => r.FindUser("1"))
+            .ReturnsAsync(true);
+
+        _mockRepoUser
+            .Setup(t => t.LoginUserAsync(It.IsAny<UserLoginRequest>()))
+            .ThrowsAsync(new UnauthorizedException("Неправильный пароль"));
+
+        var user = new UserLoginRequest
+        {
+            Username = "1",
+            Password = "12345678"
+        };
+
+        Func<Task> act = async () => await _userService.LoginUser(user);
+
+        await act.Should().ThrowAsync<UnauthorizedException>();
+
+        _mockServiceToken.Verify(t => t.GenerateJwtToken(It.IsAny<User>()), Times.Never);
+        _mockRepoToken.Verify(t => t.AddRefreshTokenAsync(It.IsAny<string>(), It.IsAny<int>()), Times.Never);
     }
 }
